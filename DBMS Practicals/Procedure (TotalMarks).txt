@@ -1,0 +1,61 @@
+mysql> use SEcond;
+Database changed
+mysql> show tables;
++------------------+
+| Tables_in_second |
++------------------+
+| result           |
+| stud_marks       |
++------------------+
+2 rows in set (0.54 sec)
+
+mysql> desc Stud_marks;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| Name       | varchar(20) | YES  |     | NULL    |       |
+| TotalMarks | int         | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+2 rows in set (0.16 sec)
+
+mysql> desc result;
++--------+-------------+------+-----+---------+----------------+
+| Field  | Type        | Null | Key | Default | Extra          |
++--------+-------------+------+-----+---------+----------------+
+| RollNo | int         | NO   | PRI | NULL    | auto_increment |
+| Name   | varchar(20) | YES  |     | NULL    |                |
+| Class  | varchar(50) | YES  |     | NULL    |                |
++--------+-------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> delimiter //
+mysql> CREATE PROCEDURE Grade()
+    ->      BEGIN
+    ->         INSERT INTO Result (Name, Class)
+    ->         SELECT
+    ->             Name,
+    ->              CASE
+    ->                 WHEN TotalMarks >= 900 AND TotalMarks <= 1500 THEN 'Distinction'
+    ->                  WHEN TotalMarks >= 890 AND TotalMarks <= 989 THEN 'First Class'
+    ->                 WHEN TotalMarks >= 825 AND TotalMarks <= 899 THEN 'Higher Second Class'
+    ->              ELSE 'Not Categorized'
+    ->              END AS Class
+    ->       FROM Stud_Marks;
+    ->  END;
+    ->  //
+Query OK, 0 rows affected (0.12 sec)
+
+mysql> call Grade();
+    -> //
+Query OK, 3 rows affected (0.23 sec)
+
+mysql> select * from Result;
+    -> //
++--------+--------+---------------------+
+| RollNo | Name   | Class               |
++--------+--------+---------------------+
+|      1 | John   | Distinction         |
+|      2 | El     | Distinction         |
+|      3 | Dustin | Higher Second Class |
++--------+--------+---------------------+
+3 rows in set (0.02 sec)

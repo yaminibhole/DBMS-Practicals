@@ -1,0 +1,44 @@
+mysql> use seven;
+Database changed
+mysql> create table borrower(RollNo int,Name varchar(20),Date_of_Issue date,Name_of_Book varchar(20),Status varchar(20));
+Query OK, 0 rows affected (1.84 sec)
+
+mysql> insert into borrower values(1,"John","2023-09-01","The Little Woman","Issued"),(2,"El","2023-09-02","Stranger Things","Issued"),(3,"Shi Oh","2023-09-03","Strong Woman Namsoon","Issued");
+Query OK, 3 rows affected (0.27 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> create table fine(RollNo int auto_increment primary key,Date date,Amount int);
+Query OK, 0 rows affected (0.72 sec)
+
+mysql> delimiter //
+mysql> create procedure FineStatus(in Roll int,BookName varchar(50))
+    -> begin
+    -> declare dateoi date;
+    -> declare status varchar(20);
+    -> declare days_late int;
+    -> declare fine_amt int;
+    -> select Date_of_Issue,Status into dateoi,status from borrower where RollNo = Roll and Name_of_Book = BookName;
+    -> set days_late = datediff(curdate(),dateoi);
+    -> if days_late >30 then set fine_amt = days_late * 50;
+    -> else set fine_amt = days_late * 5;
+    -> end if;
+    -> insert into fine(RollNo,Date,Amount) values(Roll,dateoi,fine_amt);
+    -> update borrower set Status = "Returned" where RollNo = Roll and Name_of_Book = BookName;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.27 sec)
+
+mysql> call FineStatus(2,"Stranger Things");
+    -> //
+Query OK, 1 row affected (0.47 sec)
+
+mysql> select * from fine;
+    -> //
++--------+------------+--------+
+| RollNo | Date       | Amount |
++--------+------------+--------+
+|      2 | 2023-09-02 |   3150 |
++--------+------------+--------+
+1 row in set (0.00 sec)
+
+mysql>

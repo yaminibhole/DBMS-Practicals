@@ -1,0 +1,44 @@
+mysql> use viewseq;
+Database changed
+
+mysql>  create table Students(sid int auto_increment primary key,sname varchar(20),class varchar(20),address varchar(30),enrolldate date,subname varchar(20),attendance int,grade int);
+Query OK, 0 rows affected (0.69 sec)
+
+mysql> create index ind on Students(sname);
+Query OK, 0 rows affected (0.93 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql>  insert into Students(sname,class,address,enrolldate,subname,attendance,grade) values("John","Class A","123 Main St","2023-10-01","Math",90,95),("El","Class B","456 Oak St","2023-10-02","English",89,75),("Dustin","Class C","123 Lake St","2023-10-04","DM",70,85);
+Query OK, 3 rows affected (0.12 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> create view Sperformance as select class,avg(grade) as AvgGrade,avg(attendance) as AvgAttendance from Students group by class;
+Query OK, 0 rows affected (0.28 sec)
+
+mysql> select * from Students;
++-----+--------+---------+-------------+------------+---------+------------+-------+
+| sid | sname  | class   | address     | enrolldate | subname | attendance | grade |
++-----+--------+---------+-------------+------------+---------+------------+-------+
+|   1 | John   | Class A | 123 Main St | 2023-10-01 | Math    |         90 |    95 |
+|   2 | El     | Class B | 456 Oak St  | 2023-10-02 | English |         89 |    75 |
+|   3 | Dustin | Class C | 123 Lake St | 2023-10-04 | DM      |         70 |    85 |
++-----+--------+---------+-------------+------------+---------+------------+-------+
+3 rows in set (0.02 sec)
+
+mysql> select * from Sperformance;
++---------+----------+---------------+
+| class   | AvgGrade | AvgAttendance |
++---------+----------+---------------+
+| Class A |  95.0000 |       90.0000 |
+| Class B |  75.0000 |       89.0000 |
+| Class C |  85.0000 |       70.0000 |
++---------+----------+---------------+
+3 rows in set (0.06 sec)
+
+mysql> select * from Students where sname="El";
++-----+-------+---------+------------+------------+---------+------------+-------+
+| sid | sname | class   | address    | enrolldate | subname | attendance | grade |
++-----+-------+---------+------------+------------+---------+------------+-------+
+|   2 | El    | Class B | 456 Oak St | 2023-10-02 | English |         89 |    75 |
++-----+-------+---------+------------+------------+---------+------------+-------+
+1 row in set (0.03 sec)

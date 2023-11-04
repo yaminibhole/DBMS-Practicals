@@ -1,0 +1,150 @@
+mysql> create database First;
+Query OK, 1 row affected (0.91 sec)
+
+mysql> use First;
+Database changed
+mysql> create table Branch(BranchName varchar(20) primary key,BranchCity varchar(20),AssetsAmount int);
+Query OK, 0 rows affected (1.74 sec)
+
+mysql>  create table Account(AccNo int primary key,BranchName varchar(20),Balance int,foreign key(BranchName) references Branch(BranchName));
+Query OK, 0 rows affected (1.80 sec)
+
+mysql> create table Customer(CustName varchar(20) primary key,CustStreet varchar(20),CustCity varchar(20));
+Query OK, 0 rows affected (0.65 sec)
+
+mysql> create table Loan(AccNo int,LoanNo int primary key,BranchName varchar(20),Amount int,foreign key (BranchName) references Branch(BranchName),foreign key (AccNo) references Account(AccNo));
+Query OK, 0 rows affected (2.41 sec)
+
+mysql> create table Borrower(CustName varchar(20),LoanNo int,primary key (CustName,LoanNo),foreign key(CustName) references Customer(CustName),foreign key(LoanNo) references Loan(LoanNo));
+Query OK, 0 rows affected (2.06 sec)
+
+mysql> create table Depositor(CustName varchar(20),AccNo int);
+Query OK, 0 rows affected (1.35 sec)
+
+mysql> insert into Branch values ("Pimpri","Pune",5000),("Akurdi","Pune",7000),("Chinchwad","Pune",12000);
+Query OK, 3 rows affected (0.42 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into Customer values("John","123 Main St","Pune"),("El","456 Elm St","Pune"),("Max","789 Oak St","Pune");
+Query OK, 3 rows affected (0.36 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into Account values(1,"Pimpri",100000),(2,"Akurdi",120000),(3,"Chinchwad",150000);
+Query OK, 3 rows affected (0.16 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into Depositor values("John",1),("El",2),("Max",3);
+Query OK, 3 rows affected (0.17 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into Loan values(1,101,"Pimpri",20000),(2,102,"Akurdi",18000),(3,103,"Chinchwad",25000);
+Query OK, 3 rows affected (0.08 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into Borrower values("John",101),("El",102),("Max",103);
+Query OK, 3 rows affected (0.30 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+--2. Find the names of all branches in loan relation.
+mysql> select distinct BranchName from Loan;
++------------+
+| BranchName |
++------------+
+| Akurdi     |
+| Chinchwad  |
+| Pimpri     |
++------------+
+3 rows in set (0.00 sec)
+
+--3. Find all loan numbers for loans made at Pimpri Branch with loan amount &gt; 12000.
+mysql> select LoanNo from Loan where BranchName="Pimpri" and Amount > 1200;
++--------+
+| LoanNo |
++--------+
+|    101 |
++--------+
+1 row in set (0.04 sec)
+
+--4. Find all customers who have a loan from bank. Find their names, loan_no and loan amount.
+mysql> select C.CustName ,L.LoanNo,L.Amount from Customer C,Borrower B,Loan L where C.CustName = B.CustName and B.LoanNo = L.LoanNo;
++----------+--------+--------+
+| CustName | LoanNo | Amount |
++----------+--------+--------+
+| El       |    102 |  18000 |
+| John     |    101 |  20000 |
+| Max      |    103 |  25000 |
++----------+--------+--------+
+3 rows in set (0.00 sec)
+
+--5. List all customers in alphabetical order who have loan from Akurdi branch.
+mysql> select C.CustName from Customer C,Borrower B,Loan L where C.CustName = B.CustName and B.LoanNo = L.LoanNo and L.BranchName = "Akurdi" order by C.CustName;
++----------+
+| CustName |
++----------+
+| El       |
++----------+
+1 row in set (0.00 sec)
+
+--6. Find all customers who have an account or loan or both at bank.
+mysql> select CustName from Customer where CustName in(select CustName from Depositor union select CustName from Borrower);
++----------+
+| CustName |
++----------+
+| El       |
+| John     |
+| Max      |
++----------+
+3 rows in set (0.08 sec)
+
+--7. Find all customers who have both account and loan at bank.
+mysql> select C.CustName from Customer C,Depositor D, Borrower B where C.CustName = D.CustName and C.CustName = B.Custname;
++----------+
+| CustName |
++----------+
+| John     |
+| El       |
+| Max      |
++----------+
+3 rows in set (0.03 sec)
+
+--8. Find average account balance at Pimpri branch.
+mysql> select avg(Balance) as avgBalance from Account where BranchName = "Pimpri";
++-------------+
+| avgBalance  |
++-------------+
+| 100000.0000 |
++-------------+
+1 row in set (0.11 sec)
+
+--9. Find the average account balance at each branch
+mysql> select BranchName, avg(Balance) as avgBalance from Account group by BranchName;
++------------+-------------+
+| BranchName | avgBalance  |
++------------+-------------+
+| Akurdi     | 120000.0000 |
+| Chinchwad  | 150000.0000 |
+| Pimpri     | 100000.0000 |
++------------+-------------+
+3 rows in set (0.00 sec)
+
+--10. Find the branches where average account balance &gt; 12000.
+mysql> select BranchName from (select BranchName,avg(Balance) as avgBalance from Account group by BranchName) as Branch_Avg where avgBalance > 12000;
++------------+
+| BranchName |
++------------+
+| Akurdi     |
+| Chinchwad  |
+| Pimpri     |
++------------+
+3 rows in set (0.00 sec)
+
+--11. Calculate total loan amount given by bank.
+mysql> select sum(Amount) as Total_Loan_Amount from Loan;
++-------------------+
+| Total_Loan_Amount |
++-------------------+
+|             63000 |
++-------------------+
+1 row in set (0.00 sec)
+
+mysql>

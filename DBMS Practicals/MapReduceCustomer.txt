@@ -1,0 +1,38 @@
+test> use Mapreduce
+switched to db Mapreduce
+Mapreduce> db.createCollection('Customer');
+{ ok: 1 }
+Mapreduce> db.Customer.insertMany([{cid: 1,
+...     cname: "Alice",
+...     amount: 100,
+...     product_name: "Product A"
+...   },{
+...     cid: 2,
+...     cname: "Bob",
+...     amount: 150,
+...     product_name: "Product B"
+...   },
+...   {
+...     cid: 1,
+...     cname: "Alice",
+...     amount: 75,
+...     product_name: "Product C"
+...   },
+...   {
+...     cid: 3,
+...     cname: "Charlie",
+...     amount: 200,
+...     product_name: "Product A"
+...   }
+Mapreduce> var mapFunction = function(){ emit(this.cid,this.amount);};
+{
+Mapreduce> var reduceFunction = function(customerId,amounts){ return Array.sum(amounts);};
+  insertedIds: {
+Mapreduce> db.Customer.mapReduce(mapFunction,reduceFunction,{out:"Customer_Summary"});
+Mapreduce> db.Customer_Summary.find();
+[ }
+  { _id: 1, value: 175 },
+  { _id: 3, value: 200 },
+  { _id: 2, value: 150 }
+]
+Mapreduce>

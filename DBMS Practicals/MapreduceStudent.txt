@@ -1,0 +1,29 @@
+test> use StudentData;
+switched to db StudentData
+StudentData> createCollection("Student");
+ReferenceError: createCollection is not defined
+StudentData> db.createCollection("Student");
+{ ok: 1 }
+StudentData> db.Student.insertMany([{Roll:1,Name:"Yamini",Subject:"DSA",Marks:28},{Roll:1,Name:"Yamini",Subject:"DM",Marks:29},{Roll:1,Name:"Yamini",Subject:"CN",Marks:25},{Roll:2,Name:"Gaurav",Subject:"DSA",Marks:29},{Roll:2,Name:"Gaurav",Subject:"DM",Marks:30},{Roll:2,Name:"Gaurav",Subject:"CN",Marks:24},{Roll:3,Name:"Himanshu",Subject:"DSA",Marks:28},{Roll:3,Name:"Himanshu",Subject:"DM",Marks:29},{Roll:3,Name:"Himanshu",Subject:"CN",Marks:25}]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("653e62b90c8c1fdf52d14790"),
+    '1': ObjectId("653e62b90c8c1fdf52d14791"),
+    '2': ObjectId("653e62b90c8c1fdf52d14792"),
+    '3': ObjectId("653e62b90c8c1fdf52d14793"),
+    '4': ObjectId("653e62b90c8c1fdf52d14794"),
+    '5': ObjectId("653e62b90c8c1fdf52d14795"),
+    '6': ObjectId("653e62b90c8c1fdf52d14796"),
+    '7': ObjectId("653e62b90c8c1fdf52d14797"),
+    '8': ObjectId("653e62b90c8c1fdf52d14798")
+  }
+}
+StudentData> var Mapfunction = function(){emit(this.Roll,this.Marks)}
+
+StudentData> var Reducefunction = function(key,values){return Array.sum(values)}
+
+StudentData> db.Student.mapReduce(Mapfunction,Reducefunction,{'out':'Result_mapreduce'});
+{ result: 'Result_mapreduce', ok: 1 }
+StudentData>
+[ { _id: 1, value: 82 }, { _id: 2, value: 83 }, { _id: 3, value: 82 } ]

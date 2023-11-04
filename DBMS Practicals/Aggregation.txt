@@ -1,0 +1,91 @@
+test> use Practicals;
+switched to db Practicals
+Practicals> db.Books.find();
+[
+  {
+    _id: ObjectId("653e35e2f01694719a801d7a"),
+    Title: 'Book1',
+    Author: 'Author A',
+    Genre: 'Fiction',
+    Price: 200,
+    PublishDate: ISODate("2022-01-15T11:00:30.000Z")
+  },
+  {
+    _id: ObjectId("653e35e2f01694719a801d7b"),
+    Title: 'Book2',
+    Author: 'Author B',
+    Genre: 'Mystery',
+    Price: 250,
+    PublishDate: ISODate("2023-01-23T00:00:00.000Z")
+  },
+  {
+    _id: ObjectId("653e35e2f01694719a801d7c"),
+    Title: 'Book3',
+    Author: 'Author C',
+    Genre: 'Non-Fiction',
+    Price: 400,
+    PublishDate: ISODate("2022-10-03T11:00:03.000Z")
+  }
+]
+Practicals> db.Books.aggregate([{$group:{_id:null,averagePrice:{$avg:"$Price"}}}]);
+[ { _id: null, averagePrice: 283.3333333333333 } ]
+
+Practicals> db.Books.aggregate([{$group:{_id:"$Genre",count:{$sum:1}}}]);
+[ { _id: 'Non-Fiction', count: 1 },
+  { _id: 'Mystery', count: 1 },
+  { _id: 'Non-Fiction', count: 1 },
+  { _id: 'Fiction', count: 1 } 1 }
+]
+Practicals> db.Books.aggregate([{$group:{_id:"$Genre",count:{$sum:1}}}]);
+[
+  { _id: 'Mystery', count: 1 },
+  { _id: 'Non-Fiction', count: 1 },
+  { _id: 'Fiction', count: 1 } 1 }
+]
+
+Practicals> db.Books.aggregate([{$group:{_id:"$Genre",maxPriceBook:{$max:"$Price"}}}]);
+[
+  { _id: 'Fiction', maxPriceBook: 200 },
+  { _id: 'Mystery', maxPriceBook: 250 },
+  { _id: 'Non-Fiction', maxPriceBook: 400 }
+]
+
+Practicals>  db.Books.aggregate([{$sort:{PublishDate:-1,Price:1}}]);
+[
+  {
+    _id: ObjectId("653e35e2f01694719a801d7b"),
+    Title: 'Book2',
+    Author: 'Author B',
+    Genre: 'Mystery',
+    Price: 250,
+    PublishDate: ISODate("2023-01-23T00:00:00.000Z")
+  },
+  {
+    _id: ObjectId("653e35e2f01694719a801d7c"),
+    Title: 'Book3',
+    Author: 'Author C',
+    Genre: 'Non-Fiction',
+    Price: 400,
+    PublishDate: ISODate("2022-10-03T11:00:03.000Z")
+  },
+  {
+    _id: ObjectId("653e35e2f01694719a801d7a"),
+    Title: 'Book1',
+    Author: 'Author A',
+    Genre: 'Fiction',
+    Price: 200,
+    PublishDate: ISODate("2022-01-15T11:00:30.000Z")
+  }
+]
+Practicals> db.Books.insertMany([{Title:"Book4",Author:"Author A",Genre:"Fiction",Price:200,PublishDate: ISODate("2022-01-15T11:00:30.000Z")},{Title:"Book5",Author:"Author A",Genre:"Fiction",Price:200,PublishDate: ISODate("2022-02-15T11:00:30.000Z")},{Title:"Book6",Author:"Author A",Genre:"Fiction",Price:200,PublishDate: ISODate("2022-10-15T11:00:30.000Z")}]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("653e4060e1302ab09440d193"),
+    '1': ObjectId("653e4060e1302ab09440d194"),
+    '2': ObjectId("653e4060e1302ab09440d195")
+  }
+}
+Practicals> db.Books.aggregate([{$group:{_id:"$Author",bookCount:{$sum:1}}},{$match:{bookCount:{$gt:3}}}]);
+[ { _id: 'Author A', bookCount: 4 } ]
+Practicals>

@@ -1,0 +1,99 @@
+mysql> create database RollCall;
+Query OK, 1 row affected (0.32 sec)
+
+mysql> use RollCall;
+Database changed
+
+mysql> create table New(RollNo int primary key,Date date);
+Query OK, 0 rows affected (0.99 sec)
+
+mysql>  insert into New values(1,'2023-10-01'),(2,'2023-10-01'),(3,'2023-10-02'),(4,'2023-10-02');
+Query OK, 4 rows affected (0.15 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql>  create table Old(RollNo int primary key,Date date);
+Query OK, 0 rows affected (0.98 sec)
+
+mysql> insert into Old values(1,'2023-10-01'),(2,'2023-10-03');
+Query OK, 2 rows affected (0.11 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> DELIMITER //
+mysql>
+mysql> CREATE PROCEDURE MergeRollCall()
+    -> BEGIN
+    ->   DECLARE done INT DEFAULT FALSE;
+    ->   DECLARE v_RollNo INT;
+    ->   DECLARE v_Date DATE;
+    ->
+    ->   DECLARE cur CURSOR FOR SELECT RollNo, Date FROM New;
+    ->   DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    ->
+    ->   OPEN cur;
+    ->
+    ->   read_loop: LOOP
+    ->     FETCH cur INTO v_RollNo, v_Date;
+    ->     IF done THEN
+    ->       LEAVE read_loop;
+    ->     END IF;
+    ->
+    ->     -- Use the INSERT IGNORE statement to avoid duplicates
+    ->     INSERT IGNORE INTO Old (RollNo, Date) VALUES (v_RollNo, v_Date);
+    ->   END LOOP;
+    ->
+    ->   CLOSE cur;
+    -> END //
+Query OK, 0 rows affected (0.14 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql> call MergeRollCall();
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> select * from Old;
++--------+------------+
+| RollNo | Date       |
++--------+------------+
+|      1 | 2023-10-01 |
+|      2 | 2023-10-03 |
+|      3 | 2023-10-02 |
+|      4 | 2023-10-02 |
++--------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from New;
++--------+------------+
+| RollNo | Date       |
++--------+------------+
+|      1 | 2023-10-01 |
+|      2 | 2023-10-01 |
+|      3 | 2023-10-02 |
+|      4 | 2023-10-02 |
++--------+------------+
+4 rows in set (0.00 sec)
+
+mysql>  insert into New values(8,'2023-10-09'),(2,'2023-10-09'),(12,'2023-10-02'),(7,'2023-10-08');
+ERROR 1062 (23000): Duplicate entry '2' for key 'new.PRIMARY'
+mysql>  insert into New values(8,'2023-10-09'),(5,'2023-10-09'),(12,'2023-10-02'),(7,'2023-10-08');
+Query OK, 4 rows affected (0.45 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> call MergeRollCall();
+Query OK, 0 rows affected (0.36 sec)
+
+mysql> select * from Old;
++--------+------------+
+| RollNo | Date       |
++--------+------------+
+|      1 | 2023-10-01 |
+|      2 | 2023-10-03 |
+|      3 | 2023-10-02 |
+|      4 | 2023-10-02 |
+|      5 | 2023-10-09 |
+|      7 | 2023-10-08 |
+|      8 | 2023-10-09 |
+|     12 | 2023-10-02 |
++--------+------------+
+8 rows in set (0.00 sec)
+
+mysql>

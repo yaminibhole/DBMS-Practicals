@@ -1,0 +1,296 @@
+test> use MongoDB
+switched to db MongoDB
+MongoDB> createCollection("Teachers");
+ReferenceError: createCollection is not defined
+MongoDB> db.createCollection("Teachers");
+MongoDB> db.Teachers.insertMany([{Tname:"Vaibhav",dno:1,dname:"AIDS",experience:5,salary:120,DateofJoiniMongoDB> db.Teachers.insertMany([{Tname:"Vaibhav",dno:1,dname:"AIDS",experience:5,salary:120,DateofJoining:"2022-01-15"},{Tname:"Shubhangi S",dno:2,dname:"Computer",experience:10,salary:500,DateofJoining:"2020-01-15"},{Tname:"Vanita",dno:3,dname:"Mechanical",experience:5,salary:300,DateofJoining:"2022-05-15"},{Tname:"Prashant",dno:4,dname:"AIDS",experience:1,salary:150,DateofJoining:"2023-02-15"},{Tname:"Vairagar",dno:5,dname:"AIDS",experience:20,salary:200,DateofJoining:"2019-01-15"}]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("653e4494aa30411e2d69dbb3"),
+    '1': ObjectId("653e4494aa30411e2d69dbb4"),
+    '2': ObjectId("653e4494aa30411e2d69dbb5"),
+    '3': ObjectId("653e4494aa30411e2d69dbb6"),
+    '4': ObjectId("653e4494aa30411e2d69dbb7")
+  }
+}
+
+-- 1.     Find the information about all teachers alphabetically.
+MongoDB> db.Teachers.find();
+[
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb3"),
+    Tname: 'Vaibhav',
+    dno: 1,
+    dname: 'AIDS',
+    experience: 5,
+    salary: 120,
+    DateofJoining: '2022-01-15'
+  },
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb4"),
+    Tname: 'Shubhangi S',
+    dno: 2,
+    dname: 'Computer',
+    experience: 10,
+    salary: 500,
+    DateofJoining: '2020-01-15'
+  },
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb5"),
+    Tname: 'Vanita',
+    dno: 3,
+    dname: 'Mechanical',
+    experience: 5,
+    salary: 300,
+    DateofJoining: '2022-05-15'
+  },
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb6"),
+    Tname: 'Prashant',
+    dno: 4,
+    dname: 'AIDS',
+    experience: 1,
+    salary: 150,
+    DateofJoining: '2023-02-15'
+  },
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb7"),
+    Tname: 'Vairagar',
+    dno: 5,
+    dname: 'AIDS',
+    experience: 20,
+    salary: 200,
+    DateofJoining: '2019-01-15'
+  }
+]
+MongoDB> db.createCollection("Students");
+{ ok: 1 }
+
+MongoDB> db.Students.insertMany([{Sname:"Yamini",Roll:1,Class:"A"},{Sname:"Gaurav",Roll:2,Class:"A"},{Sname:"Himanshu",Roll:1,Class:"B"},{Sname:"Mithil",Roll:2,Class:"B"},{Sname:"Shashank",Roll:3,Class:"A"},{Sname:"Kaustubh",Roll:3,Class:"B"},{Sname:"Anushka",Roll:4,Class:"A"}]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("653e45d9aa30411e2d69dbb8"),
+    '1': ObjectId("653e45d9aa30411e2d69dbb9"),
+    '2': ObjectId("653e45d9aa30411e2d69dbba"),
+    '3': ObjectId("653e45d9aa30411e2d69dbbb"),
+    '4': ObjectId("653e45d9aa30411e2d69dbbc"),
+    '5': ObjectId("653e45d9aa30411e2d69dbbd"),
+    '6': ObjectId("653e45d9aa30411e2d69dbbe")
+  }
+}
+MongoDB> db.Students.find();
+[
+  {
+    _id: ObjectId("653e45d9aa30411e2d69dbb8"),
+    Sname: 'Yamini',
+    Roll: 1,
+    Class: 'A'
+  },
+  {
+    _id: ObjectId("653e45d9aa30411e2d69dbb9"),
+    Sname: 'Gaurav',
+    Roll: 2,
+    Class: 'A'
+  },
+  {
+    _id: ObjectId("653e45d9aa30411e2d69dbba"),
+    Sname: 'Himanshu',
+    Roll: 1,
+    Class: 'B'
+  },
+  {
+    _id: ObjectId("653e45d9aa30411e2d69dbbb"),
+    Sname: 'Mithil',
+    Roll: 2,
+    Class: 'B'
+  },
+  {
+    _id: ObjectId("653e45d9aa30411e2d69dbbc"),
+    Sname: 'Shashank',
+    Roll: 3,
+    Class: 'A'
+  },
+  {
+    _id: ObjectId("653e45d9aa30411e2d69dbbd"),
+    Sname: 'Kaustubh',
+    Roll: 3,
+    Class: 'B'
+  },
+  {
+    _id: ObjectId("653e45d9aa30411e2d69dbbe"),
+    Sname: 'Anushka',
+    Roll: 4,
+    Class: 'A'
+  }
+]
+
+--2.     Find the information about all teachers of the computer department
+MongoDB> db.Teachers.find({dname:"Computer"});
+[
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb4"),
+    Tname: 'Shubhangi S',
+    dno: 2,
+    dname: 'Computer',
+    experience: 10,
+    salary: 500,
+    DateofJoining: '2020-01-15'
+  }
+]
+
+--4.     Find the information about all teachers of computer,IT,and E&amp;TC department having salary greater than or equal to 10000/-
+MongoDB> db.Teachers.find({"dname":{$in:["Computer","AIDS"]},"salary":{$gte:100}});
+[
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb3"),
+    Tname: 'Vaibhav',
+    dno: 1,
+    dname: 'AIDS',
+    experience: 5,
+    salary: 120,
+    DateofJoining: '2022-01-15'
+  },
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb4"),
+    Tname: 'Shubhangi S',
+    dno: 2,
+    dname: 'Computer',
+    experience: 10,
+    salary: 500,
+    DateofJoining: '2020-01-15'
+  },
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb6"),
+    Tname: 'Prashant',
+    dno: 4,
+    dname: 'AIDS',
+    experience: 1,
+    salary: 150,
+    DateofJoining: '2023-02-15'
+  },
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb7"),
+    Tname: 'Vairagar',
+    dno: 5,
+    dname: 'AIDS',
+    experience: 20,
+    salary: 200,
+    DateofJoining: '2019-01-15'
+  }
+]
+
+--6.     Find the student information having roll_no = 2 or Sname=xyz
+MongoDB> db.Students.find({$or:[{"Roll":2},{"Sname":"Yamini"}]});
+[
+  {
+    _id: ObjectId("653e45d9aa30411e2d69dbb8"),
+    Sname: 'Yamini',
+    Roll: 1,
+    Class: 'A'
+  },
+  {
+    _id: ObjectId("653e45d9aa30411e2d69dbb9"),
+    Sname: 'Gaurav',
+    Roll: 2,
+    Class: 'A'
+  },
+  {
+    _id: ObjectId("653e45d9aa30411e2d69dbbb"),
+    Sname: 'Mithil',
+    Roll: 2,
+    Class: 'B'
+  }
+]
+
+--7.     Update the experience of teacher-praveen to 10 years, if the entry is not available in database consider the entry as new entry.
+MongoDB> db.Teachers.updateOne({"Tname":"Prashant"},{$set:{"experience":10}},{upsert:true})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+MongoDB> db.Teachers.find();
+[
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb3"),
+    Tname: 'Vaibhav',
+    dno: 1,
+    dname: 'AIDS',
+    experience: 5,
+    salary: 120,
+    DateofJoining: '2022-01-15'
+  },
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb4"),
+    Tname: 'Shubhangi S',
+    dno: 2,
+    dname: 'Computer',
+    experience: 10,
+    salary: 500,
+    DateofJoining: '2020-01-15'
+  },
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb5"),
+    Tname: 'Vanita',
+    dno: 3,
+    dname: 'Mechanical',
+    experience: 5,
+    salary: 300,
+    DateofJoining: '2022-05-15'
+  },
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb6"),
+    Tname: 'Prashant',
+    dno: 4,
+    dname: 'AIDS',
+    experience: 10,
+    salary: 150,
+    DateofJoining: '2023-02-15'
+  },
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb7"),
+    Tname: 'Vairagar',
+    dno: 5,
+    dname: 'AIDS',
+    experience: 20,
+    salary: 200,
+    DateofJoining: '2019-01-15'
+  }
+]
+
+
+MongoDB> db.Teachers.find({},{ "_id":0,"Tname":1,"experience":1});
+[
+  { Tname: 'Vaibhav', experience: 5 },
+  { Tname: 'Shubhangi S', experience: 10 },
+  { Tname: 'Vanita', experience: 5 },
+  { Tname: 'Prashant', experience: 10 },
+  { Tname: 'Vairagar', experience: 20 }
+]
+
+MongoDB> db.Teachers.find().sort({"dno":1}).limit(2).pretty();
+[
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb3"),
+    Tname: 'Vaibhav',
+    dno: 1,
+    dname: 'AIDS',
+    experience: 5,
+    salary: 120,
+    DateofJoining: '2022-01-15'
+  },
+  {
+    _id: ObjectId("653e4494aa30411e2d69dbb4"),
+    Tname: 'Shubhangi S',
+    dno: 2,
+    dname: 'Computer',
+    experience: 10,
+    salary: 500,
+    DateofJoining: '2020-01-15'
+  }
+]
+MongoDB>
